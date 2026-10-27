@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Janko, estudio de tatuaje. Reserva tu cita.">
+<title>Janko</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@400;600;800&family=Spectral:ital,wght@0,300;0,400;1,300&family=UnifrakturCook:wght@700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: cabecera fija con barra de progreso, hero asimétrico con luna y ceniza, franja de estilos, rejilla de tarjetas, proceso en números romanos, flash dibujado a trazo y panel de reserva. */
+:root {
+  color-scheme: dark;
+  --bg: #0c0a0d;
+  --bg-2: #120e15;
+  --card: #16111b;
+  --line: #2b2231;
+  --fg: #ece4e6;
+  --bone: #f4eded;
+  --muted: #a69ba3;
+  --blood: #8f1d2f;
+  --blood-hi: #b3243b;
+  --blood-text: #d8606f;
+  --bar: rgba(12, 10, 13, 0.9);
+  --haze-1: rgba(143, 29, 47, 0.22);
+  --haze-2: rgba(74, 34, 96, 0.18);
+  --glow: rgba(179, 36, 59, 0.38);
+  --f-logo: 'UnifrakturCook', 'Old English Text MT', Blackletter, serif;
+  --f-head: 'Grenze Gotisch', Georgia, 'Times New Roman', serif;
+  --f-body: 'Spectral', Georgia, 'Times New Roman', serif;
+  --f-mono: 'DM Mono', ui-monospace, Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--f-body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 60;
+  background: var(--bg);
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+a { color: inherit; }
+h1, h2, h3, p, ol, ul { margin: 0; padding: 0; }
+:focus-visible { outline: 2px solid var(--blood-text); outline-offset: 3px; }
+::selection { background: var(--blood); color: var(--bone); }
+
+.in {
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* Botones */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6em;
+  min-height: 48px;
+  padding: 0 1.5rem;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  font: 500 0.78rem/1 var(--f-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.25s, border-color 0.25s, color 0.25s, box-shadow 0.25s, transform 0.25s;
+}
+.btn-primary { background: var(--blood); color: var(--bone); border-color: var(--blood-hi); }
+.btn-primary:hover { background: var(--blood-hi); box-shadow: 0 0 0 5px var(--glow); }
+.btn-ghost { background: transparent; color: var(--fg); border-color: var(--line); }
+.btn-ghost:hover { border-color: var(--blood-text); color: var(--bone); }
+.btn-sm { min-height: 40px; padding: 0 1rem; font-size: 0.68rem; }
+
+/* Cabecera */
+.bar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 50;
+  background: var(--bar);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.bar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 2px;
+  width: 100%;
+  background: var(--blood-hi);
+  transform-origin: left center;
+  transform: scaleX(var(--p, 0));
+}
+.bar-in { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 62px; }
+.brand { font: 700 2rem/1 var(--f-logo); text-decoration: none; color: var(--bone); letter-spacing: 0.01em; }
+.links { display: none; gap: 28px; }
+.links a { font: 400 0.72rem/1 var(--f-mono); letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; color: var(--muted); transition: color 0.2s; }
+.links a:hover { color: var(--bone); }
+.tools { display: flex; align-items: center; gap: 10px; }
+.lang { position: relative; }
+.btn-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 12px;
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  font: 500 0.72rem/1 var(--f-mono);
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.btn-lang:hover, .btn-lang[aria-expanded="true"] { border-color: var(--blood-text); }
+.btn-lang svg { width: 10px; height: 10px; transition: transform 0.25s; }
+.btn-lang[aria-expanded="true"] svg { transform: rotate(180deg); }
+.menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  min-width: 168px;
+  display: grid;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+  animation: drop 0.22s ease both;
+}
+.menu button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 46px;
+  padding: 0 16px;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--fg);
+  font: 400 1rem/1 var(--f-head);
+  text-align: left;
+  cursor: pointer;
+}
+.menu button:last-child { border-bottom: 0; }
+.menu button:hover { background: var(--bg-2); color: var(--bone); }
+.menu button[aria-current="true"] { color: var(--blood-text); }
+.menu button small { font: 400 0.66rem/1 var(--f-mono); letter-spacing: 0.14em; color: var(--muted); }
+@keyframes drop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+/* Hero */
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(48px, 11vw, 120px) clamp(56px, 10vw, 112px);
+  background:
+    radial-gradient(90% 70% at 88% 0%, var(--haze-1), transparent 65%),
+    radial-gradient(60% 50% at 0% 100%, var(--haze-2), transparent 70%);
+}
+.hero .in { position: relative; z-index: 2; }
+#ash { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+.moon {
+  position: absolute;
+  right: -6%;
+  top: 4%;
+  width: min(78vw, 520px);
+  z-index: 1;
+  color: var(--blood-hi);
+  opacity: 0.55;
+  will-change: transform;
+  pointer-events: none;
+}
+.moon path { fill: rgba(143, 29, 47, 0.07); stroke: currentColor; stroke-width: 0.8; }
+.moon .star { fill: none; }
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font: 400 0.76rem/1 var(--f-mono);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--blood-text);
+  animation: fade 1s 0.1s both;
+}
+.kicker::before { content: ""; width: 38px; height: 1px; background: var(--blood-hi); }
+.logo {
+  margin-top: 22px;
+  font: 700 clamp(5.6rem, 27vw, 14rem)/0.92 var(--f-logo);
+  letter-spacing: 0.01em;
+  color: var(--bone);
+  text-shadow: 0 0 28px rgba(179, 36, 59, 0.35);
+  animation: glow 5s ease-in-out infinite alternate;
+}
+.logo span { display: inline-block; animation: rise 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.logo span:nth-child(1) { animation-delay: 0.15s; }
+.logo span:nth-child(2) { animation-delay: 0.27s; }
+.logo span:nth-child(3) { animation-delay: 0.39s; }
+.logo span:nth-child(4) { animation-delay: 0.51s; }
+.logo span:nth-child(5) { animation-delay: 0.63s; }
+.tagline {
+  margin-top: 26px;
+  max-width: 26ch;
+  font: italic 300 clamp(1.3rem, 4.4vw, 1.85rem)/1.35 var(--f-body);
+  color: var(--fg);
+  animation: fade 1.2s 0.8s both;
+}
+.hero-cta { margin-top: 34px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px 18px; animation: fade 1.2s 1s both; }
+.hero-num { font: 400 0.92rem/1 var(--f-mono); letter-spacing: 0.1em; color: var(--muted); }
+@keyframes rise { from { opacity: 0; transform: translateY(46px); filter: blur(8px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes glow { from { text-shadow: 0 0 18px rgba(179, 36, 59, 0.22); } to { text-shadow: 0 0 44px rgba(179, 36, 59, 0.55); } }
+
+/* Franja */
+.marq { border-block: 1px solid var(--line); background: var(--bg-2); overflow: hidden; padding-block: 16px; }
+.marq-track { display: flex; width: max-content; animation: marq 34s linear infinite; }
+.marq-grp { display: flex; align-items: center; gap: 30px; padding-right: 30px; }
+.marq-grp .w { font: 400 1.55rem/1 var(--f-head); color: var(--muted); white-space: nowrap; }
+.sep { width: 7px; height: 7px; background: var(--blood-hi); transform: rotate(45deg); flex: none; }
+@keyframes marq { to { transform: translateX(-50%); } }
+
+/* Secciones */
+.sec { padding-block: clamp(60px, 10vw, 112px); position: relative; z-index: 2; }
+.alt { background: var(--bg-2); }
+h2 {
+  font: 800 clamp(2.3rem, 7.5vw, 3.8rem)/1 var(--f-head);
+  color: var(--bone);
+  text-wrap: balance;
+  letter-spacing: 0.005em;
+}
+h2::after { content: ""; display: block; width: 52px; height: 2px; margin-top: 18px; background: var(--blood-hi); }
+.split { display: grid; gap: 30px; grid-template-columns: minmax(0, 1fr); }
+.copy { display: grid; gap: 18px; max-width: 62ch; color: var(--fg); }
+.copy p:first-child::first-letter {
+  float: left;
+  margin: 0.06em 0.12em 0 0;
+  font: 700 3.6rem/0.8 var(--f-logo);
+  color: var(--blood-text);
+}
+.head { margin-bottom: 40px; }
+
+/* Estilos */
+.cards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr)); }
+.card {
+  position: relative;
+  padding: 30px 26px 32px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  transition: border-color 0.35s, box-shadow 0.35s, transform 0.35s;
+}
+.card::before, .card::after { content: ""; position: absolute; width: 14px; height: 14px; border: 1px solid var(--blood-hi); transition: width 0.35s, height 0.35s; }
+.card::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+.card::after { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+.card:hover { border-color: var(--blood); box-shadow: 0 14px 40px rgba(143, 29, 47, 0.18); transform: translateY(-4px); }
+.card:hover::before, .card:hover::after { width: 30px; height: 30px; }
+.card h3 { font: 600 1.85rem/1.1 var(--f-head); color: var(--bone); }
+.card p { margin-top: 12px; color: var(--muted); max-width: 34ch; }
+
+/* Proceso */
+.steps { list-style: none; display: grid; grid-template-columns: minmax(0, 1fr); }
+.steps li { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 2px 16px; padding: 24px 0; border-top: 1px solid var(--line); }
+.steps .rn { grid-row: span 2; font: 700 3rem/1 var(--f-logo); color: var(--blood-hi); }
+.steps h3 { font: 600 1.6rem/1.1 var(--f-head); color: var(--bone); }
+.steps p { color: var(--muted); max-width: 36ch; }
+
+/* Flash */
+.flash { display: grid; gap: 14px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.fl { background: var(--card); border: 1px solid var(--line); padding: 22px 16px 14px; }
+.fl svg { display: block; width: 100%; height: auto; max-width: 100%; color: var(--bone); filter: drop-shadow(0 0 7px rgba(179, 36, 59, 0.4)); }
+.fl .ln { stroke-dasharray: 1; stroke-dashoffset: 0; transition: stroke-dashoffset 2.4s ease 0.2s; }
+.fl figcaption { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); font: 400 0.7rem/1 var(--f-mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
+.cap { margin-top: 26px; color: var(--muted); font-style: italic; max-width: 52ch; }
+
+/* Reserva */
+.book { display: grid; gap: 34px; grid-template-columns: minmax(0, 1fr); align-items: start; }
+.panel { padding: 30px 26px; background: var(--card); border: 1px solid var(--blood); box-shadow: 0 0 60px rgba(143, 29, 47, 0.16); }
+.lbl { font: 400 0.7rem/1 var(--f-mono); letter-spacing: 0.26em; text-transform: uppercase; color: var(--blood-text); }
+.phone { display: block; margin-top: 14px; font: 500 clamp(1.55rem, 7vw, 2.3rem)/1.1 var(--f-mono); letter-spacing: 0.04em; color: var(--bone); -webkit-user-select: all; user-select: all; }
+.acts { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 12px; }
+.acts .btn { flex: 1 1 200px; }
+.hint { margin-top: 14px; min-height: 1.4em; font: 400 0.8rem/1.4 var(--f-mono); color: var(--muted); }
+
+/* Pie */
+.foot { padding-block: 34px calc(34px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); position: relative; z-index: 2; }
+.foot .in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; }
+.foot .brand { font-size: 1.7rem; }
+.foot p { font: 400 0.72rem/1.4 var(--f-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+
+/* Aparición al deslizar */
+.reveal { transition: opacity 0.95s ease, transform 0.95s cubic-bezier(0.2, 0.7, 0.2, 1); transition-delay: var(--d, 0ms); }
+.js-reveal .reveal:not(.in-view) { opacity: 0; transform: translateY(30px); }
+.js-reveal .fl:not(.in-view) .ln { stroke-dashoffset: 1; }
+.cards .card:nth-child(3n + 2) { --d: 90ms; }
+.cards .card:nth-child(3n) { --d: 180ms; }
+.flash .fl:nth-child(2) { --d: 100ms; }
+.flash .fl:nth-child(3) { --d: 200ms; }
+.flash .fl:nth-child(4) { --d: 300ms; }
+.steps li:nth-child(2) { --d: 90ms; }
+.steps li:nth-child(3) { --d: 180ms; }
+.steps li:nth-child(4) { --d: 270ms; }
+
+@media (min-width: 640px) {
+  .links { display: flex; }
+}
+@media (min-width: 800px) {
+  .split { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 56px; }
+  .flash { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+  .book { grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 56px; }
+  .panel { padding: 40px 36px; }
+}
+@media (min-width: 900px) {
+  .steps { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; }
+  .steps li { display: block; padding: 26px 0 0; }
+  .steps .rn { display: block; margin-bottom: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .logo, .logo span, .kicker, .tagline, .hero-cta, .menu { animation: none; }
+  .marq-track { animation: none; }
+  .reveal, .fl .ln { transition: none; }
+}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+
+<header class="bar" id="top">
+  <div class="in bar-in">
+    <a class="brand" href="#top" aria-label="Janko">Janko</a>
+    <nav class="links" aria-label="Principal">
+      <a href="#estilos" data-i18n="nav_styles">Estilos</a>
+      <a href="#proceso" data-i18n="nav_process">Proceso</a>
+      <a href="#flash" data-i18n="nav_flash">Flash</a>
+    </nav>
+    <div class="tools">
+      <div class="lang">
+        <button class="btn-lang" id="langBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="langMenu" aria-label="Idioma" data-i18n-aria="langLabel">
+          <span id="langCur">ES</span>
+          <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 3l4 4 4-4"/></svg>
+        </button>
+        <div class="menu" id="langMenu" hidden>
+          <button type="button" data-lang="es">Español <small>ES</small></button>
+          <button type="button" data-lang="en">English <small>EN</small></button>
+          <button type="button" data-lang="fr">Français <small>FR</small></button>
+          <button type="button" data-lang="de">Deutsch <small>DE</small></button>
+        </div>
+      </div>
+      <a class="btn btn-primary btn-sm" data-wa href="https://wa.me/34656311701" target="_blank" rel="noopener" data-i18n="nav_book">Reservar</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <canvas id="ash" aria-hidden="true"></canvas>
+    <svg class="moon" id="moon" viewBox="0 0 120 160" aria-hidden="true">
+      <path d="M80 22 A58 58 0 0 0 80 138 A70 70 0 0 1 80 22 Z"/>
+      <path class="star" d="M98 40 L101 49 L110 52 L101 55 L98 64 L95 55 L86 52 L95 49 Z"/>
+    </svg>
+    <div class="in">
+      <p class="kicker" data-i18n="kicker">Estudio de tatuaje</p>
+      <h1 class="logo" aria-label="Janko"><span aria-hidden="true">J</span><span aria-hidden="true">a</span><span aria-hidden="true">n</span><span aria-hidden="true">k</span><span aria-hidden="true">o</span></h1>
+      <p class="tagline" data-i18n="tagline">Tatuajes oscuros, góticos y hechos a medida.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" data-wa href="https://wa.me/34656311701" target="_blank" rel="noopener" data-i18n="cta">Reservar cita</a>
+        <a class="btn btn-ghost" href="#estilos" data-i18n="seeStyles">Ver estilos</a>
+        <span class="hero-num">+34 656 311 701</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="marq" aria-hidden="true">
+    <div class="marq-track">
+      <div class="marq-grp"><span class="w">Blackwork</span><i class="sep"></i><span class="w">Gothic</span><i class="sep"></i><span class="w">Fine line</span><i class="sep"></i><span class="w">Dotwork</span><i class="sep"></i><span class="w">Lettering</span><i class="sep"></i><span class="w">Cover-up</span><i class="sep"></i><span class="w">Flash</span><i class="sep"></i></div>
+      <div class="marq-grp"><span class="w">Blackwork</span><i class="sep"></i><span class="w">Gothic</span><i class="sep"></i><span class="w">Fine line</span><i class="sep"></i><span class="w">Dotwork</span><i class="sep"></i><span class="w">Lettering</span><i class="sep"></i><span class="w">Cover-up</span><i class="sep"></i><span class="w">Flash</span><i class="sep"></i></div>
+    </div>
+  </div>
+
+  <section class="sec" id="sobre">
+    <div class="in split">
+      <h2 class="reveal" data-i18n="aboutT">Sobre Janko</h2>
+      <div class="copy reveal" style="--d:120ms">
+        <p data-i18n="about1">Janko es un estudio de tatuaje de ambiente oscuro y trato cercano. Trabajamos blackwork, lettering gótico y línea fina, siempre con un diseño pensado para tu piel.</p>
+        <p data-i18n="about2">Antes de empezar hablamos la idea, el tamaño y la zona. En cada sesión usamos material nuevo y de un solo uso.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec alt" id="estilos">
+    <div class="in">
+      <div class="head reveal"><h2 data-i18n="stylesT">Estilos</h2></div>
+      <div class="cards">
+        <article class="card reveal"><h3 data-i18n="s1t">Blackwork</h3><p data-i18n="s1d">Negro sólido, contraste fuerte y formas que se leen desde lejos.</p></article>
+        <article class="card reveal"><h3 data-i18n="s2t">Lettering gótico</h3><p data-i18n="s2d">Frases y nombres en letra gótica, adaptados a tu cuerpo.</p></article>
+        <article class="card reveal"><h3 data-i18n="s3t">Fine line</h3><p data-i18n="s3d">Trazo fino y delicado para detalles discretos.</p></article>
+        <article class="card reveal"><h3 data-i18n="s4t">Dotwork</h3><p data-i18n="s4d">Sombras construidas punto a punto.</p></article>
+        <article class="card reveal"><h3 data-i18n="s5t">Realismo oscuro</h3><p data-i18n="s5d">Retratos y criaturas con luz baja y mucha sombra.</p></article>
+        <article class="card reveal"><h3 data-i18n="s6t">Cover-up</h3><p data-i18n="s6d">Tapamos o rehacemos tatuajes antiguos con un diseño nuevo.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="proceso">
+    <div class="in">
+      <div class="head reveal"><h2 data-i18n="processT">Cómo trabajamos</h2></div>
+      <ol class="steps">
+        <li class="reveal"><span class="rn" aria-hidden="true">I</span><h3 data-i18n="p1t">Contacto</h3><p data-i18n="p1d">Escríbenos con tu idea, la zona del cuerpo y el tamaño aproximado.</p></li>
+        <li class="reveal"><span class="rn" aria-hidden="true">II</span><h3 data-i18n="p2t">Diseño</h3><p data-i18n="p2d">Dibujamos una propuesta y la ajustamos contigo antes de la cita.</p></li>
+        <li class="reveal"><span class="rn" aria-hidden="true">III</span><h3 data-i18n="p3t">Sesión</h3><p data-i18n="p3d">Tatuamos con calma, con pausas cuando las necesites.</p></li>
+        <li class="reveal"><span class="rn" aria-hidden="true">IV</span><h3 data-i18n="p4t">Cuidados</h3><p data-i18n="p4d">Te damos las pautas para que cicatrice bien y el negro se mantenga.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="sec alt" id="flash">
+    <div class="in">
+      <div class="head reveal"><h2 data-i18n="flashT">Flash</h2></div>
+      <div class="flash">
+        <figure class="fl reveal" style="margin:0">
+          <svg viewBox="0 0 120 160" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Luna" data-i18n-aria="fMoon">
+            <path class="ln" pathLength="1" d="M80 22 A58 58 0 0 0 80 138 A70 70 0 0 1 80 22 Z"/>
+            <path class="ln" pathLength="1" d="M98 40 L101 49 L110 52 L101 55 L98 64 L95 55 L86 52 L95 49 Z"/>
+            <path class="ln" pathLength="1" d="M30 30 L31.5 35 L36.5 36.5 L31.5 38 L30 43 L28.5 38 L23.5 36.5 L28.5 35 Z"/>
+          </svg>
+          <figcaption data-i18n="fMoon">Luna</figcaption>
+        </figure>
+        <figure class="fl reveal" style="margin:0">
+          <svg viewBox="0 0 120 160" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Daga" data-i18n-aria="fDagger">
+            <circle class="ln" pathLength="1" cx="60" cy="14" r="6"/>
+            <path class="ln" pathLength="1" d="M56 20 L64 20 L64 50 L56 50 Z"/>
+            <path class="ln" pathLength="1" d="M28 56 Q60 44 92 56 L92 63 Q60 53 28 63 Z"/>
+            <path class="ln" pathLength="1" d="M51 64 L51 108 L60 150 L69 108 L69 64"/>
+            <path class="ln" pathLength="1" d="M60 68 L60 128"/>
+          </svg>
+          <figcaption data-i18n="fDagger">Daga</figcaption>
+        </figure>
+        <figure class="fl reveal" style="margin:0">
+          <svg viewBox="0 0 120 160" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Ojo" data-i18n-aria="fEye">
+            <path class="ln" pathLength="1" d="M10 76 Q60 26 110 76 Q60 126 10 76 Z"/>
+            <circle class="ln" pathLength="1" cx="60" cy="76" r="20"/>
+            <circle class="ln" pathLength="1" cx="60" cy="76" r="7"/>
+            <path class="ln" pathLength="1" d="M60 22 L60 40 M31 34 L38 48 M89 34 L82 48"/>
+            <path class="ln" pathLength="1" d="M60 110 Q49 128 60 142 Q71 128 60 110 Z"/>
+          </svg>
+          <figcaption data-i18n="fEye">Ojo</figcaption>
+        </figure>
+        <figure class="fl reveal" style="margin:0">
+          <svg viewBox="0 0 120 160" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Vitral" data-i18n-aria="fWindow">
+            <path class="ln" pathLength="1" d="M26 152 L26 74 Q26 36 60 12 Q94 36 94 74 L94 152 Z"/>
+            <path class="ln" pathLength="1" d="M42 152 L42 78 Q42 54 60 38 Q78 54 78 78 L78 152"/>
+            <path class="ln" pathLength="1" d="M60 38 L60 152"/>
+            <path class="ln" pathLength="1" d="M42 104 L78 104"/>
+            <circle class="ln" pathLength="1" cx="60" cy="72" r="6"/>
+          </svg>
+          <figcaption data-i18n="fWindow">Vitral</figcaption>
+        </figure>
+      </div>
+      <p class="cap reveal" data-i18n="flashCap">Ejemplos de trazo. Cada diseño final se dibuja contigo.</p>
+    </div>
+  </section>
+
+  <section class="sec" id="reserva">
+    <div class="in book">
+      <div class="reveal">
+        <h2 data-i18n="bookT">Reserva tu cita</h2>
+        <p class="copy" style="margin-top:26px" data-i18n="bookText">Cuéntanos tu idea por WhatsApp o llámanos. Te respondemos para cerrar fecha y diseño.</p>
+      </div>
+      <div class="panel reveal" style="--d:120ms">
+        <span class="lbl" data-i18n="phoneLabel">Teléfono (España)</span>
+        <span class="phone" id="phone">+34 656 311 701</span>
+        <div class="acts">
+          <a class="btn btn-primary" data-wa href="https://wa.me/34656311701" target="_blank" rel="noopener" data-i18n="btnWa">Reservar por WhatsApp</a>
+          <a class="btn btn-ghost" href="tel:+34656311701" data-i18n="btnCall">Llamar</a>
+          <button class="btn btn-ghost" id="copyBtn" type="button" data-i18n="btnCopy">Copiar número</button>
+        </div>
+        <p class="hint" id="hint" role="status" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="in">
+    <a class="brand" href="#top" aria-label="Janko">Janko</a>
+    <p data-i18n="footer">© 2026 Janko · Estudio de tatuaje</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var NUM = '+34656311701';
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var D = {
+    es: {
+      langLabel: 'Idioma', nav_styles: 'Estilos', nav_process: 'Proceso', nav_flash: 'Flash', nav_book: 'Reservar',
+      kicker: 'Estudio de tatuaje', tagline: 'Tatuajes oscuros, góticos y hechos a medida.', cta: 'Reservar cita', seeStyles: 'Ver estilos',
+      aboutT: 'Sobre Janko',
+      about1: 'Janko es un estudio de tatuaje de ambiente oscuro y trato cercano. Trabajamos blackwork, lettering gótico y línea fina, siempre con un diseño pensado para tu piel.',
+      about2: 'Antes de empezar hablamos la idea, el tamaño y la zona. En cada sesión usamos material nuevo y de un solo uso.',
+      stylesT: 'Estilos',
+      s1t: 'Blackwork', s1d: 'Negro sólido, contraste fuerte y formas que se leen desde lejos.',
+      s2t: 'Lettering gótico', s2d: 'Frases y nombres en letra gótica, adaptados a tu cuerpo.',
+      s3t: 'Fine line', s3d: 'Trazo fino y delicado para detalles discretos.',
+      s4t: 'Dotwork', s4d: 'Sombras construidas punto a punto.',
+      s5t: 'Realismo oscuro', s5d: 'Retratos y criaturas con luz baja y mucha sombra.',
+      s6t: 'Cover-up', s6d: 'Tapamos o rehacemos tatuajes antiguos con un diseño nuevo.',
+      processT: 'Cómo trabajamos',
+      p1t: 'Contacto', p1d: 'Escríbenos con tu idea, la zona del cuerpo y el tamaño aproximado.',
+      p2t: 'Diseño', p2d: 'Dibujamos una propuesta y la ajustamos contigo antes de la cita.',
+      p3t: 'Sesión', p3d: 'Tatuamos con calma, con pausas cuando las necesites.',
+      p4t: 'Cuidados', p4d: 'Te damos las pautas para que cicatrice bien y el negro se mantenga.',
+      flashT: 'Flash', fMoon: 'Luna', fDagger: 'Daga', fEye: 'Ojo', fWindow: 'Vitral',
+      flashCap: 'Ejemplos de trazo. Cada diseño final se dibuja contigo.',
+      bookT: 'Reserva tu cita', bookText: 'Cuéntanos tu idea por WhatsApp o llámanos. Te respondemos para cerrar fecha y diseño.',
+      phoneLabel: 'Teléfono (España)', btnWa: 'Reservar por WhatsApp', btnCall: 'Llamar', btnCopy: 'Copiar número',
+      copied: 'Número copiado.', selectHint: 'Selecciona el número para copiarlo.',
+      footer: '© 2026 Janko · Estudio de tatuaje',
+      waMsg: 'Hola Janko, quiero reservar una cita para un tatuaje.'
+    },
+    en: {
+      langLabel: 'Language', nav_styles: 'Styles', nav_process: 'Process', nav_flash: 'Flash', nav_book: 'Book',
+      kicker: 'Tattoo studio', tagline: 'Dark, gothic tattoos, drawn to fit you.', cta: 'Book now', seeStyles: 'See styles',
+      aboutT: 'About Janko',
+      about1: 'Janko is a tattoo studio with a dark atmosphere and a personal approach. We work in blackwork, gothic lettering and fine line, always with a design made for your skin.',
+      about2: 'Before we start, we talk through the idea, the size and the placement. Every session uses new, single-use materials.',
+      stylesT: 'Styles',
+      s1t: 'Blackwork', s1d: 'Solid black, strong contrast and shapes you can read from across the room.',
+      s2t: 'Gothic lettering', s2d: 'Phrases and names in gothic script, fitted to your body.',
+      s3t: 'Fine line', s3d: 'Thin, delicate linework for discreet details.',
+      s4t: 'Dotwork', s4d: 'Shading built up dot by dot.',
+      s5t: 'Dark realism', s5d: 'Portraits and creatures in low light and deep shadow.',
+      s6t: 'Cover-up', s6d: 'We cover or rework old tattoos with a new design.',
+      processT: 'How we work',
+      p1t: 'Contact', p1d: 'Message us with your idea, the area of the body and the approximate size.',
+      p2t: 'Design', p2d: 'We draw a proposal and adjust it with you before the appointment.',
+      p3t: 'Session', p3d: 'We tattoo calmly, with breaks whenever you need them.',
+      p4t: 'Aftercare', p4d: 'We give you the steps for a clean heal and black that holds.',
+      flashT: 'Flash', fMoon: 'Moon', fDagger: 'Dagger', fEye: 'Eye', fWindow: 'Window',
+      flashCap: 'Sample linework. Every final design is drawn with you.',
+      bookT: 'Book your appointment', bookText: 'Tell us your idea on WhatsApp or give us a call. We reply to settle the date and the design.',
+      phoneLabel: 'Phone (Spain)', btnWa: 'Book on WhatsApp', btnCall: 'Call', btnCopy: 'Copy number',
+      copied: 'Number copied.', selectHint: 'Select the number to copy it.',
+      footer: '© 2026 Janko · Tattoo studio',
+      waMsg: 'Hi Janko, I would like to book a tattoo appointment.'
+    },
+    fr: {
+      langLabel: 'Langue', nav_styles: 'Styles', nav_process: 'Méthode', nav_flash: 'Flash', nav_book: 'Réserver',
+      kicker: 'Studio de tatouage', tagline: 'Tatouages sombres, gothiques et faits sur mesure.', cta: 'Réserver', seeStyles: 'Voir les styles',
+      aboutT: 'À propos de Janko',
+      about1: "Janko est un studio de tatouage à l'ambiance sombre et au contact simple. Nous travaillons le blackwork, le lettering gothique et le trait fin, avec un dessin pensé pour votre peau.",
+      about2: "Avant de commencer, nous parlons de l'idée, de la taille et de l'emplacement. À chaque séance, le matériel est neuf et à usage unique.",
+      stylesT: 'Styles',
+      s1t: 'Blackwork', s1d: 'Noir intense, fort contraste, des formes lisibles de loin.',
+      s2t: 'Lettering gothique', s2d: 'Phrases et prénoms en écriture gothique, adaptés à votre corps.',
+      s3t: 'Fine line', s3d: 'Trait fin et délicat pour des détails discrets.',
+      s4t: 'Dotwork', s4d: 'Des ombres construites point par point.',
+      s5t: 'Réalisme sombre', s5d: 'Portraits et créatures dans une lumière basse, pleins d\'ombre.',
+      s6t: 'Cover-up', s6d: "Nous recouvrons ou refaisons d'anciens tatouages avec un nouveau dessin.",
+      processT: 'Comment nous travaillons',
+      p1t: 'Contact', p1d: 'Écrivez-nous avec votre idée, la zone du corps et la taille approximative.',
+      p2t: 'Dessin', p2d: "Nous dessinons une proposition et l'ajustons avec vous avant le rendez-vous.",
+      p3t: 'Séance', p3d: 'Nous tatouons sans hâte, avec des pauses quand vous en avez besoin.',
+      p4t: 'Soins', p4d: 'Nous vous donnons les consignes pour une bonne cicatrisation et un noir qui tient.',
+      flashT: 'Flash', fMoon: 'Lune', fDagger: 'Dague', fEye: 'Œil', fWindow: 'Vitrail',
+      flashCap: 'Exemples de trait. Chaque dessin final se crée avec vous.',
+      bookT: 'Réservez votre rendez-vous', bookText: 'Parlez-nous de votre idée sur WhatsApp ou appelez-nous. Nous répondons pour fixer la date et le dessin.',
+      phoneLabel: 'Téléphone (Espagne)', btnWa: 'Réserver sur WhatsApp', btnCall: 'Appeler', btnCopy: 'Copier le numéro',
+      copied: 'Numéro copié.', selectHint: 'Sélectionnez le numéro pour le copier.',
+      footer: '© 2026 Janko · Studio de tatouage',
+      waMsg: 'Bonjour Janko, je voudrais réserver un rendez-vous pour un tatouage.'
+    },
+    de: {
+      langLabel: 'Sprache', nav_styles: 'Stile', nav_process: 'Ablauf', nav_flash: 'Flash', nav_book: 'Termin',
+      kicker: 'Tattoo-Studio', tagline: 'Dunkle, gotische Tattoos, individuell für dich gezeichnet.', cta: 'Termin buchen', seeStyles: 'Stile ansehen',
+      aboutT: 'Über Janko',
+      about1: 'Janko ist ein Tattoo-Studio mit dunkler Atmosphäre und persönlichem Austausch. Wir arbeiten mit Blackwork, gotischem Lettering und feinen Linien, immer mit einem Entwurf, der zu deiner Haut passt.',
+      about2: 'Bevor wir anfangen, sprechen wir über Idee, Größe und Körperstelle. In jeder Sitzung verwenden wir neues Einwegmaterial.',
+      stylesT: 'Stile',
+      s1t: 'Blackwork', s1d: 'Tiefes Schwarz, starker Kontrast und Formen, die man von Weitem liest.',
+      s2t: 'Gotisches Lettering', s2d: 'Sätze und Namen in gotischer Schrift, angepasst an deinen Körper.',
+      s3t: 'Fine Line', s3d: 'Feine, zarte Linien für dezente Details.',
+      s4t: 'Dotwork', s4d: 'Schatten, Punkt für Punkt aufgebaut.',
+      s5t: 'Dunkler Realismus', s5d: 'Porträts und Kreaturen in gedämpftem Licht und viel Schatten.',
+      s6t: 'Cover-up', s6d: 'Wir überdecken oder erneuern alte Tattoos mit einem neuen Motiv.',
+      processT: 'So arbeiten wir',
+      p1t: 'Kontakt', p1d: 'Schreib uns deine Idee, die Körperstelle und die ungefähre Größe.',
+      p2t: 'Entwurf', p2d: 'Wir zeichnen einen Vorschlag und passen ihn vor dem Termin mit dir an.',
+      p3t: 'Sitzung', p3d: 'Wir stechen in Ruhe, mit Pausen, wenn du sie brauchst.',
+      p4t: 'Pflege', p4d: 'Du bekommst Hinweise, damit das Tattoo gut heilt und das Schwarz hält.',
+      flashT: 'Flash', fMoon: 'Mond', fDagger: 'Dolch', fEye: 'Auge', fWindow: 'Fenster',
+      flashCap: 'Beispiele für unseren Strich. Das endgültige Motiv zeichnen wir mit dir.',
+      bookT: 'Termin buchen', bookText: 'Erzähl uns deine Idee per WhatsApp oder ruf an. Wir melden uns, um Datum und Entwurf festzulegen.',
+      phoneLabel: 'Telefon (Spanien)', btnWa: 'Per WhatsApp buchen', btnCall: 'Anrufen', btnCopy: 'Nummer kopieren',
+      copied: 'Nummer kopiert.', selectHint: 'Markiere die Nummer, um sie zu kopieren.',
+      footer: '© 2026 Janko · Tattoo-Studio',
+      waMsg: 'Hallo Janko, ich möchte einen Termin für ein Tattoo buchen.'
+    }
+  };
+
+  var lang = 'es';
+  var hintEl = document.getElementById('hint');
+
+  function pickLang() {
+    var s = null;
+    try { s = localStorage.getItem('janko-lang'); } catch (e) {}
+    if (s && D[s]) return s;
+    var n = ((navigator.language || 'es') + '').slice(0, 2).toLowerCase();
+    return D[n] ? n : 'es';
+  }
+
+  function apply(l) {
+    lang = l;
+    var t = D[l];
+    document.documentElement.lang = l;
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      var v = t[el.getAttribute('data-i18n')];
+      if (v != null) el.textContent = v;
+    });
+    document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
+      var v = t[el.getAttribute('data-i18n-aria')];
+      if (v != null) el.setAttribute('aria-label', v);
+    });
+    var href = 'https://wa.me/34656311701?text=' + encodeURIComponent(t.waMsg);
+    document.querySelectorAll('[data-wa]').forEach(function (a) { a.setAttribute('href', href); });
+    document.getElementById('langCur').textContent = l.toUpperCase();
+    document.querySelectorAll('#langMenu button').forEach(function (b) {
+      b.setAttribute('aria-current', b.getAttribute('data-lang') === l ? 'true' : 'false');
+    });
+    if (hintEl) hintEl.textContent = '';
+  }
+
+  function initLang() {
+    var btn = document.getElementById('langBtn');
+    var menu = document.getElementById('langMenu');
+    function close() { menu.hidden = true; btn.setAttribute('aria-expanded', 'false'); }
+    function open() { menu.hidden = false; btn.setAttribute('aria-expanded', 'true'); }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (menu.hidden) open(); else close();
+    });
+    menu.addEventListener('click', function (e) {
+      var b = e.target.closest('button[data-lang]');
+      if (!b) return;
+      var l = b.getAttribute('data-lang');
+      apply(l);
+      try { localStorage.setItem('janko-lang', l); } catch (err) {}
+      close();
+      btn.focus();
+    });
+    document.addEventListener('click', function (e) { if (!menu.hidden && !menu.contains(e.target)) close(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !menu.hidden) { close(); btn.focus(); } });
+    apply(pickLang());
+  }
+
+  function initCopy() {
+    var b = document.getElementById('copyBtn');
+    var ph = document.getElementById('phone');
+    function selectPhone() {
+      var r = document.createRange();
+      r.selectNodeContents(ph);
+      var s = window.getSelection();
+      s.removeAllRanges();
+      s.addRange(r);
+    }
+    b.addEventListener('click', function () {
+      var fail = function () { selectPhone(); hintEl.textContent = D[lang].selectHint; };
+      try {
+        navigator.clipboard.writeText(NUM).then(function () {
+          hintEl.textContent = D[lang].copied;
+        }, fail);
+      } catch (e) { fail(); }
+    });
+  }
+
+  function initReveal() {
+    var els = document.querySelectorAll('.reveal');
+    if (reduce || !('IntersectionObserver' in window)) return;
+    document.documentElement.classList.add('js-reveal');
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('in-view'); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -6% 0px' });
+    els.forEach(function (el) { io.observe(el); });
+  }
+
+  function initScroll() {
+    var moon = document.getElementById('moon');
+    var root = document.documentElement;
+    var ticking = false;
+    function frame() {
+      ticking = false;
+      var y = window.pageYOffset || 0;
+      var max = Math.max(1, root.scrollHeight - window.innerHeight);
+      root.style.setProperty('--p', Math.min(1, y / max).toFixed(4));
+      if (moon && !reduce && y < 1200) moon.style.transform = 'translate3d(0,' + (y * 0.2).toFixed(1) + 'px,0)';
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(frame); }
+    }, { passive: true });
+    frame();
+  }
+
+  function initAsh() {
+    var cv = document.getElementById('ash');
+    if (!cv || !cv.getContext) return;
+    var ctx = cv.getContext('2d');
+    var w = 0, h = 0, parts = [], raf = 0, visible = true;
+    function mk() {
+      return {
+        x: Math.random() * w, y: Math.random() * h,
+        r: Math.random() * 1.6 + 0.4, vy: -(Math.random() * 0.28 + 0.06),
+        vx: (Math.random() - 0.5) * 0.12, a: Math.random() * 0.5 + 0.15,
+        red: Math.random() < 0.2, ph: Math.random() * 6.28
+      };
+    }
+    function size() {
+      var r = cv.parentElement.getBoundingClientRect();
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = r.width; h = r.height;
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var n = Math.round(Math.min(80, (w * h) / 9000));
+      parts = [];
+      for (var i = 0; i < n; i++) parts.push(mk());
+      draw(0);
+    }
+    function draw(t) {
+      ctx.clearRect(0, 0, w, h);
+      for (var i = 0; i < parts.length; i++) {
+        var p = parts[i];
+        if (!reduce) {
+          p.x += p.vx + Math.sin(t / 2200 + p.ph) * 0.08;
+          p.y += p.vy;
+          if (p.y < -6) { p.y = h + 6; p.x = Math.random() * w; }
+        }
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, 6.2832);
+        ctx.fillStyle = p.red ? 'rgba(196,44,66,' + p.a + ')' : 'rgba(232,222,224,' + (p.a * 0.7) + ')';
+        ctx.fill();
+      }
+    }
+    function loop(t) {
+      draw(t);
+      if (visible && !reduce) raf = requestAnimationFrame(loop);
+    }
+    size();
+    window.addEventListener('resize', size);
+    if (!reduce) {
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (en) {
+          visible = en[0].isIntersecting;
+          cancelAnimationFrame(raf);
+          if (visible) raf = requestAnimationFrame(loop);
+        }).observe(cv.parentElement);
+      }
+      raf = requestAnimationFrame(loop);
+    }
+  }
+
+  function safe(fn, name) {
+    try { fn(); } catch (e) { if (window.console) console.warn('janko init failed:', name, e); }
+  }
+  safe(initLang, 'lang');
+  safe(initCopy, 'copy');
+  safe(initReveal, 'reveal');
+  safe(initScroll, 'scroll');
+  safe(initAsh, 'ash');
+})();
+</script>
+
+</body>
+</html>
